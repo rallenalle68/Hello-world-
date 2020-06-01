@@ -1,15 +1,29 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./App.css";
 import Todo from "./Todo";
+import db from "./firebase";
+import { log } from "util";
+
 
 function App() {
 
   const [input, setInput] = useState("");
   const [todos, setTodos] = useState([]);
 
+  useEffect(() => {
+
+    db.collection('Todos').onSnapshot(snapshot => {
+      setTodos(snapshot.docs.map(doc => doc.data().title))
+    })
+  }, [])
+
   const addTodo = (e) => {
     e.preventDefault();
-    setTodos([...todos, input])
+   
+    db.collection('Todos').add({
+      title: input,
+    })
+
     setInput("")
 
   };
